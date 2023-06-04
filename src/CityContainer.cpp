@@ -4,10 +4,21 @@
 
 #include "../include/CityContainer.h"
 
+/*
+ * Constructor
+ * @param filename - the name of the file to read the cities from
+ * @throw runtime_error if the file cannot be opened
+ */
 CityContainer::CityContainer(const std::string &filename) {
     initCities(filename);
 }
 
+/*
+ * Initialize the cities container
+ * @param filename - the name of the file to read the cities from
+ * @throw runtime_error if the file cannot be opened
+
+ */
 void CityContainer::initCities(const std::string &filename) {
     // open the file and check if it's open
     std::ifstream file(filename);
@@ -18,7 +29,9 @@ void CityContainer::initCities(const std::string &filename) {
             std::getline(file, line); // Read the second line from the file
             try {
                 Coordinates coordinates = parseCoordinates(line);
-                cities.insert({name, coordinates});
+                cities.insert({name,coordinates});
+                x_axis.insert({coordinates.first, name});
+                y_axis.insert({coordinates.second, name});
             } catch (const std::exception &e) {
                 // Catch and handle any exceptions that occur during parsing
                 std::cout << "Error parsing coordinates: " << e.what() << std::endl;
@@ -30,6 +43,11 @@ void CityContainer::initCities(const std::string &filename) {
     }
 }
 
+/*
+ * Parse the coordinates from a string
+ * @param coordinateString - the string to parse the coordinates from
+ * @return a pair of the x and y coordinates
+ */
 CityContainer::Coordinates CityContainer::parseCoordinates(const std::string& coordinateString) {
     std::stringstream ss(coordinateString);
     double xStr, yStr;
@@ -38,13 +56,6 @@ CityContainer::Coordinates CityContainer::parseCoordinates(const std::string& co
     ss >> std::ws >> xStr >> dash >> std::ws >> yStr;
     return std::make_pair(xStr, yStr);
 }
-
-//void CityContainer::findCity(const std::string &cityName) const {
-//    if (cities.find(cityName) == cities.end())
-//        throw std::runtime_error("City not found");
-//    else
-//        std::cout << "Found city: " << cityName << std::endl;
-//}
 
 std::ostream& operator<<(std::ostream& os, const CityContainer& container) {
     os << std::fixed << std::setprecision(6);

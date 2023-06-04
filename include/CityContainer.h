@@ -8,17 +8,22 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <unordered_map>
+#include <map>
+#include <functional> // for std::greater
 #include <algorithm>
 #include <iomanip>
 #include <iterator>
 
 class CityContainer {
 public:
-    using Coordinates = std::pair<long double, long double> ; // for readability purposes only
+    using Coordinates = std::pair<long double, long double>; // for readability purposes only
+    //using CityMap = std::map<Coordinates, std::string, std::greater<Coordinates>>; // sort by coordinates
+    using CityMap = std::map<std::string, Coordinates>; // sort by coordinates
+    using CityAndAxis = std::map<double, std::string, std::less_equal<double>>;
+
     // Iterator typedefs
-    using iterator = std::unordered_map<std::string, Coordinates>::iterator;
-    using const_iterator = std::unordered_map<std::string, Coordinates>::const_iterator;
+    using iterator = CityMap::iterator;
+    using const_iterator = CityMap::const_iterator;
 
     explicit CityContainer(const std::string& filename);
 
@@ -39,12 +44,26 @@ public:
         return cities.end();
     }
 
+    CityMap getCities() const {
+        return cities;
+    }
+
+    const CityAndAxis& getXAxis() const {
+        return x_axis;
+    }
+
+    const CityAndAxis& getYAxis() const {
+        return y_axis;
+    }
+
     //void findCity(const std::string& cityName) const;
 private:
     void initCities(const std::string& filename);
     Coordinates parseCoordinates(const std::string& coordinateString);
 
-    std::unordered_map<std::string, Coordinates> cities;
+    CityMap cities;
+    CityAndAxis x_axis;
+    CityAndAxis y_axis;
     friend std::ostream& operator<<(std::ostream& os, const CityContainer& container);
 };
 
